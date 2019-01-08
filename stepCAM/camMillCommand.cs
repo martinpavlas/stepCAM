@@ -13,6 +13,7 @@ namespace stepCAM
     public class Model : INotifyPropertyChanged
     {
         string finalDepth;
+        string depthPerPass;
         string offsetDirection;
 
         public string FinalDepth
@@ -22,6 +23,16 @@ namespace stepCAM
             {
                 finalDepth = value;
                 OnPropertyChanged("TotalDepth");
+            }
+        }
+
+        public string DepthPerPass
+        {
+            get { return depthPerPass; }
+            set
+            {
+                depthPerPass = value;
+                OnPropertyChanged("DepthPerPass");
             }
         }
 
@@ -58,6 +69,7 @@ namespace stepCAM
              * set the default variables
              */
             camMill.myModel.FinalDepth = "0";
+            camMill.myModel.DepthPerPass = "0";
             camMill.myModel.OffsetDirection = "Inside";
 
             /*
@@ -75,7 +87,8 @@ namespace stepCAM
             {
                 RhinoApp.WriteLine("Going to generate toolpath");
                 RhinoApp.WriteLine("Offset Direction = {0}", myModel.OffsetDirection);
-                RhinoApp.WriteLine("Total Depth = {0}", myModel.FinalDepth);
+                RhinoApp.WriteLine("Final Depth = {0}", myModel.FinalDepth);
+                RhinoApp.WriteLine("Depth per Pass = {0}", myModel.DepthPerPass);
 
             }
             else
@@ -95,10 +108,13 @@ namespace stepCAM
             Title = "Mill contour";
             var layout = new DynamicLayout();
 
-            layout.BeginVertical(new Padding(10), new Size(10, 10));
-            layout.AddRow(new Label { Text = "Offset direction:" }, fieldOffsetDirection());
-            layout.AddRow(new Label { Text = "Final depth [mm]:" }, fieldFinalDepth());
+            layout.Padding = new Padding(10);
 
+            layout.BeginVertical(new Padding(10), new Size(10, 10));
+            layout.AddRow(new Label { Text = "Offset direction:", TextAlignment = TextAlignment.Right }, fieldOffsetDirection());
+            layout.AddRow(new Label { Text = "Final depth [mm]:", TextAlignment = TextAlignment.Right }, fieldFinalDepth());
+            layout.AddRow(new Label { Text = "Depth per pass [mm]:", TextAlignment = TextAlignment.Right }, fieldDepthPerPass());
+            layout.AddRow(null);
             layout.EndVertical();
 
             layout.AddSeparateRow(null, OkButton(), CancelButton(), null);
@@ -113,6 +129,13 @@ namespace stepCAM
         {
             var textBox = new TextBox();
             textBox.TextBinding.BindDataContext<Model>(r => r.FinalDepth);
+            return textBox;
+        }
+
+        TextBox fieldDepthPerPass()
+        {
+            var textBox = new TextBox();
+            textBox.TextBinding.BindDataContext<Model>(r => r.DepthPerPass);
             return textBox;
         }
 
