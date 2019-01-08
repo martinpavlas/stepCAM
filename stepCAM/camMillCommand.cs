@@ -18,6 +18,7 @@ namespace stepCAM
         string tool;
         string finalDepth;
         string depthPerPass;
+        string toolpathName;
 
 
         public string OffsetDirection
@@ -60,6 +61,16 @@ namespace stepCAM
             }
         }
 
+        public string ToolpathName
+        {
+            get { return toolpathName; }
+            set
+            {
+                toolpathName = value;
+                OnPropertyChanged("ToolpathName");
+            }
+        }
+
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged(string propertyName)
@@ -88,6 +99,7 @@ namespace stepCAM
             camMill.myModel.Tool = "T1 (1mm)";
             camMill.myModel.FinalDepth = "0";
             camMill.myModel.DepthPerPass = "0";
+            camMill.myModel.ToolpathName = "Path000";
 
             /*
              * display form and wait for the input
@@ -107,6 +119,7 @@ namespace stepCAM
                 RhinoApp.WriteLine("Tool = {0}", myModel.Tool);
                 RhinoApp.WriteLine("Final Depth = {0}", myModel.FinalDepth);
                 RhinoApp.WriteLine("Depth per Pass = {0}", myModel.DepthPerPass);
+                RhinoApp.WriteLine("Toolpath name = {0}", myModel.ToolpathName);
 
                 var point = new Point3d(0, 0, 0);
                 doc.Objects.AddPoint(point);
@@ -136,6 +149,7 @@ namespace stepCAM
             layout.AddRow(new Label { Text = "Tool:", TextAlignment = TextAlignment.Right }, fieldTool());
             layout.AddRow(new Label { Text = "Final depth [mm]:", TextAlignment = TextAlignment.Right }, fieldFinalDepth());
             layout.AddRow(new Label { Text = "Depth per pass [mm]:", TextAlignment = TextAlignment.Right }, fieldDepthPerPass());
+            layout.AddRow(new Label { Text = "Toolpath name:", TextAlignment = TextAlignment.Right }, fieldToolpathName());
             layout.AddRow(null);
             layout.EndVertical();
 
@@ -172,6 +186,13 @@ namespace stepCAM
         {
             var textBox = new TextBox();
             textBox.TextBinding.BindDataContext<Model>(r => r.DepthPerPass);
+            return textBox;
+        }
+
+        TextBox fieldToolpathName()
+        {
+            var textBox = new TextBox();
+            textBox.TextBinding.BindDataContext<Model>(r => r.ToolpathName);
             return textBox;
         }
 
