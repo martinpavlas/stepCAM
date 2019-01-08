@@ -5,6 +5,8 @@ using Eto.Drawing;
 using Eto.Forms;
 using System.ComponentModel;
 
+using Rhino.Geometry;
+
 
 namespace stepCAM
 {
@@ -105,6 +107,9 @@ namespace stepCAM
                 RhinoApp.WriteLine("Tool = {0}", myModel.Tool);
                 RhinoApp.WriteLine("Final Depth = {0}", myModel.FinalDepth);
                 RhinoApp.WriteLine("Depth per Pass = {0}", myModel.DepthPerPass);
+
+                var point = new Point3d(0, 0, 0);
+                doc.Objects.AddPoint(point);
 
             }
             else
