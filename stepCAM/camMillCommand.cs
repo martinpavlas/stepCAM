@@ -12,9 +12,31 @@ namespace stepCAM
 
     public class Model : INotifyPropertyChanged
     {
+        string offsetDirection;
+        string tool;
         string finalDepth;
         string depthPerPass;
-        string offsetDirection;
+
+
+        public string OffsetDirection
+        {
+            get { return offsetDirection; }
+            set
+            {
+                offsetDirection = value;
+                OnPropertyChanged("OffsetDirection");
+            }
+        }
+
+        public string Tool
+        {
+            get { return tool; }
+            set
+            {
+                tool = value;
+                OnPropertyChanged("Tool");
+            }
+        }
 
         public string FinalDepth
         {
@@ -36,15 +58,7 @@ namespace stepCAM
             }
         }
 
-        public string OffsetDirection
-        {
-            get { return offsetDirection; }
-            set
-            {
-                offsetDirection = value;
-                OnPropertyChanged("OffsetDirection");
-            }
-        }
+
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged(string propertyName)
         {
@@ -68,9 +82,10 @@ namespace stepCAM
             /*
              * set the default variables
              */
+            camMill.myModel.OffsetDirection = "Inside";
+            camMill.myModel.Tool = "T1 (1mm)";
             camMill.myModel.FinalDepth = "0";
             camMill.myModel.DepthPerPass = "0";
-            camMill.myModel.OffsetDirection = "Inside";
 
             /*
              * display form and wait for the input
@@ -87,6 +102,7 @@ namespace stepCAM
             {
                 RhinoApp.WriteLine("Going to generate toolpath");
                 RhinoApp.WriteLine("Offset Direction = {0}", myModel.OffsetDirection);
+                RhinoApp.WriteLine("Tool = {0}", myModel.Tool);
                 RhinoApp.WriteLine("Final Depth = {0}", myModel.FinalDepth);
                 RhinoApp.WriteLine("Depth per Pass = {0}", myModel.DepthPerPass);
 
@@ -112,6 +128,7 @@ namespace stepCAM
 
             layout.BeginVertical(new Padding(10), new Size(10, 10));
             layout.AddRow(new Label { Text = "Offset direction:", TextAlignment = TextAlignment.Right }, fieldOffsetDirection());
+            layout.AddRow(new Label { Text = "Tool:", TextAlignment = TextAlignment.Right }, fieldTool());
             layout.AddRow(new Label { Text = "Final depth [mm]:", TextAlignment = TextAlignment.Right }, fieldFinalDepth());
             layout.AddRow(new Label { Text = "Depth per pass [mm]:", TextAlignment = TextAlignment.Right }, fieldDepthPerPass());
             layout.AddRow(null);
@@ -123,6 +140,20 @@ namespace stepCAM
 
             // set the data context
             DataContext = camMill.myModel;
+        }
+
+        DropDown fieldOffsetDirection()
+        {
+            var dropDown = new DropDown { Items = { "Inside", "Outside" } };
+            dropDown.SelectedKeyBinding.BindDataContext<Model>(r => r.OffsetDirection);
+            return dropDown;
+        }
+
+        DropDown fieldTool()
+        {
+            var dropDown = new DropDown { Items = { "T1 (1mm)", "T2 (2mm)", "T3 (3mm)", "T4 (5mm)" } };
+            dropDown.SelectedKeyBinding.BindDataContext<Model>(r => r.Tool);
+            return dropDown;
         }
 
         TextBox fieldFinalDepth()
@@ -137,13 +168,6 @@ namespace stepCAM
             var textBox = new TextBox();
             textBox.TextBinding.BindDataContext<Model>(r => r.DepthPerPass);
             return textBox;
-        }
-
-        DropDown fieldOffsetDirection()
-        {
-            var dropDown = new DropDown { Items = { "Inside", "Outside" } };
-            dropDown.SelectedKeyBinding.BindDataContext<Model>(r => r.OffsetDirection);
-            return dropDown;
         }
 
         Button OkButton()
